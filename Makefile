@@ -21,7 +21,7 @@ $(shell mkdir -p $(CLI_DIR))
 $(shell mkdir -p $(PRX_DIR))
 ########################################
 # Compiler and linker options
-CC = gcc
+CC = gcc -std=c99
 AR_OPTIONS = cr
 C_FLAGS = -Wall -pedantic -g
 INC_FLAGS = -I$(INC)
