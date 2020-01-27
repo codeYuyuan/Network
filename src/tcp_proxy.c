@@ -154,7 +154,39 @@ int _get_all(int sockfd, struct command *cmd) {
         return -1;
     } else{
         printf("All key values pairs: %s\n", cmd->value);
+        char *str = cmd->value;
+        char * pch;
+        pch = strtok (str,";");
+        while (pch != NULL)
+        {
+            char * e = strchr(pch, ':');
+            int index = (int)(e - pch);
+            char entryKey[index+1];
+            char* entryValue = (char *)malloc(MAX_VALUE_SIZE);
+            strncpy( entryKey, pch, index);
+            entryKey[index] = '\0';
+            strcpy(entryValue, &pch[index+1]);
+
+            printf ("Key: %s, ", entryKey);
+            char *res = (char *) malloc(sizeof(entryValue) * 2);
+            int i = 0, j = 0;
+            for(; i < sizeof(entryValue)/ sizeof(entryValue[0]); i++){
+                char ch = entryValue[i];
+                if(ch == 'c' || ch == 'm' || ch == 'p' || ch == 't'){
+                    res[j] = ch;
+                    res[j+1] = ch;
+                    j+=2;
+                }else{
+                    res[j] = ch;
+                    j+=1;
+                }
+            }
+            res[j] = '\0';
+            printf ("Value: %s\n", res);
+            pch = strtok (NULL, ";");
+        }
         return 0;
+
     }
 }
 
