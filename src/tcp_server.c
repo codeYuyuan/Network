@@ -59,7 +59,8 @@ int _add(int sockfd, struct command *cmd) {
 int _get(int sockfd, struct command *cmd) {
     char key[MAX_KEY_SIZE];
     strcpy(key, cmd->key);
-    for(int i = 0 ; i < DBSIZE; i++){
+    int i;
+    for(i = 0 ; i < DBSIZE; i++){
         if(strcmp(db[i]->key, key) == 0){
             strcpy(cmd->value,db[i]->value);
             send_cmd(sockfd, cmd);
@@ -72,7 +73,8 @@ int _get(int sockfd, struct command *cmd) {
 int _remove(int sockfd, struct command *cmd) {
     char key[MAX_KEY_SIZE];
     strcpy(key, cmd->key);
-    for(int i = 0 ; i < DBSIZE; i++){
+    int i;
+    for(i = 0 ; i < DBSIZE; i++){
         if(strcmp(db[i]->key, key) == 0){
             memset(db[i]->key, 0, sizeof(db[i]->key));
             memset(db[i]->value, 0, sizeof(db[i]->value));
@@ -91,7 +93,8 @@ int _get_all(int sockfd, struct command *cmd) {
     char key[MAX_KEY_SIZE];
     strcpy(key, cmd->key);
     char* res = (char*) malloc(sizeof(char) * MAX_VALUE_SIZE);
-    for(int i = 0 ; i < DBSIZE; i++){
+    int i;
+    for(i = 0 ; i < DBSIZE; i++){
         if(strcmp(db[i]->key, "") != 0){
             char* entry;
             printf("%d\n", i);
@@ -173,8 +176,8 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-
-    for (int i = 0; i < DBSIZE; i++) {
+    int i;
+    for (i = 0; i < DBSIZE; i++) {
         db[i] = (struct Entry*)malloc(sizeof(struct Entry));
     }
 
