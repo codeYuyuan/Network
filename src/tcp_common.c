@@ -22,7 +22,7 @@ int _deserialize_cmd(char *cmd_buf, struct command *cmd) {
 
     memset(cmd->key, 0, MAX_KEY_SIZE);
     memset(cmd->value, 0, MAX_VALUE_SIZE);
-    if (sscanf(cmd_buf, "%u %s %s %u",
+    if (sscanf(cmd_buf, "%u %s %s %d",
                 &(cmd->type), cmd->key, cmd->value, &(cmd->errorCode)) < 0) {
         fprintf(stderr, "sscanf failed to scan input.\n");
         return -1;

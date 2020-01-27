@@ -69,12 +69,29 @@ int _get(int sockfd, struct command *cmd) {
     return -1;
 }
 
+int _remove(int sockfd, struct command *cmd) {
+    char key[MAX_KEY_SIZE];
+    strcpy(key, cmd->key);
+    for(int i = 0 ; i < DBSIZE; i++){
+        if(strcmp(db[i]->key, key) == 0){
+            memset(db[i]->key, 0, sizeof(db[i]->key));
+            memset(db[i]->value, 0, sizeof(db[i]->value));
+            printf("[INFO] Remove (%s:%s) from DB\n", db[i]->key, db[i]->value);
+            cmd->errorCode = 1;
+            send_cmd(sockfd, cmd);
+            return 0;
+        }
+    }
+    cmd->errorCode = -1;
+    send_cmd(sockfd, cmd);
+    return -1;
+}
+
 int _get_all(int sockfd, struct command *cmd) {
     char key[MAX_KEY_SIZE];
     strcpy(key, cmd->key);
     char* res = (char*) malloc(sizeof(char) * MAX_VALUE_SIZE);
     for(int i = 0 ; i < DBSIZE; i++){
-        printf("out%d\n", i);
         if(strcmp(db[i]->key, "") != 0){
             char* entry;
             printf("%d\n", i);
@@ -84,12 +101,11 @@ int _get_all(int sockfd, struct command *cmd) {
             strcat(entry, db[i]->value);
             strcat(entry, ";");
             strcat(res, entry);
-            strcpy(cmd->value, res);
-            send_cmd(sockfd, cmd);
-            return 0;
         }
     }
-    return -1;
+    strcpy(cmd->value, res);
+    send_cmd(sockfd, cmd);
+    return 0;
 }
 
 /**
@@ -195,6 +211,11 @@ int main(int argc, char **argv) {
             }
             else if (cmd.type == GETALL) {
                 if (0 != (status = _get_all(new_fd, &cmd))) {
+                    fprintf(stderr, "Error: server: failed to execute %u command: %d\n", cmd.type, status);
+                }
+            }
+            else if (cmd.type == REMOVE) {
+                if (0 != (status = _remove(new_fd, &cmd))) {
                     fprintf(stderr, "Error: server: failed to execute %u command: %d\n", cmd.type, status);
                 }
             }

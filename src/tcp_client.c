@@ -109,6 +109,25 @@ int _get(int sockfd, struct command *cmd) {
     }
 }
 
+int _remove(int sockfd, struct command *cmd) {
+
+    // send get request
+    send_cmd(sockfd, cmd);
+
+    // Recieve handshake
+    if (-1 == recv_cmd(sockfd, cmd)) {
+        fprintf(stderr, "Error: client: failed to receive handshake command.\n");
+        cmd->errorCode = -1;
+        return -1;
+    } else if(cmd->errorCode == 1){
+        printf("Successfully removed key  %s\n", cmd->key);
+        return 0;
+    } else{
+        printf("Fail to remove key  %s\n", cmd->key);
+        return -1;
+    }
+}
+
 int _get_all(int sockfd, struct command *cmd) {
 
     // send get request
@@ -216,6 +235,11 @@ int main(int argc, char **argv) {
         }
         else if (cmd.type == GETALL) {
             if (0 != (status = _get_all(sockfd, &cmd))) {
+                fprintf(stderr, "Error: client: failed to execute %u command: %d\n", cmd.type, status);
+            }
+        }
+        else if (cmd.type == REMOVE) {
+            if (0 != (status = _remove(sockfd, &cmd))) {
                 fprintf(stderr, "Error: client: failed to execute %u command: %d\n", cmd.type, status);
             }
         }
