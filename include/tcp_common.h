@@ -10,7 +10,7 @@
 #define CMD_SIZE (sizeof (struct command) + 4)
 #define TIMEOUT 10
 #define MAX_KEY_SIZE 20
-#define MAX_VALUE_SIZE 20
+#define MAX_VALUE_SIZE 1000
 
 
 enum cmd_type {

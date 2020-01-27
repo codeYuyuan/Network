@@ -63,16 +63,12 @@ void send_cmd(int sockfd, struct command *cmd) {
 }
 
 
-
-
-
-
 void print_cmd(struct command *cmd) {
     if (NULL == cmd) {
         printf("NULL command.");
     }
     else {
-        printf("type: %d, key: %s, value: %s, errorCode: %u\n",
+        printf("type: %d, key: %s, value: %s, errorCode: %d\n",
                 cmd->type, cmd->key, cmd->value, cmd->errorCode);
     }
 }
@@ -87,7 +83,6 @@ void set_timeout(int sockfd) {
 
 /**
  * From Beej's Guide
- * get sockaddr, IPv4 or IPv6:
  */
 void *get_in_addr(struct sockaddr *sa)
 {

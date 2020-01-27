@@ -23,7 +23,7 @@
 
 
 
-struct Entry* db[20];
+struct Entry* db[DBSIZE];
 
 /**
  * Returns  -1 If there is an error with the request
@@ -59,10 +59,32 @@ int _add(int sockfd, struct command *cmd) {
 int _get(int sockfd, struct command *cmd) {
     char key[MAX_KEY_SIZE];
     strcpy(key, cmd->key);
-    int i = 0;
-    for(; i < sizeof(db)/ sizeof(db[0]); i++){
+    for(int i = 0 ; i < DBSIZE; i++){
         if(strcmp(db[i]->key, key) == 0){
             strcpy(cmd->value,db[i]->value);
+            send_cmd(sockfd, cmd);
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int _get_all(int sockfd, struct command *cmd) {
+    char key[MAX_KEY_SIZE];
+    strcpy(key, cmd->key);
+    char* res = (char*) malloc(sizeof(char) * MAX_VALUE_SIZE);
+    for(int i = 0 ; i < DBSIZE; i++){
+        printf("out%d\n", i);
+        if(strcmp(db[i]->key, "") != 0){
+            char* entry;
+            printf("%d\n", i);
+            entry = (char*) malloc(sizeof(char) * 41);
+            strcpy(entry, db[i]->key);
+            strcat(entry, ":");
+            strcat(entry, db[i]->value);
+            strcat(entry, ";");
+            strcat(res, entry);
+            strcpy(cmd->value, res);
             send_cmd(sockfd, cmd);
             return 0;
         }
@@ -168,6 +190,11 @@ int main(int argc, char **argv) {
             }
             else if (cmd.type == GETVALUE) {
                 if (0 != (status = _get(new_fd, &cmd))) {
+                    fprintf(stderr, "Error: server: failed to execute %u command: %d\n", cmd.type, status);
+                }
+            }
+            else if (cmd.type == GETALL) {
+                if (0 != (status = _get_all(new_fd, &cmd))) {
                     fprintf(stderr, "Error: server: failed to execute %u command: %d\n", cmd.type, status);
                 }
             }

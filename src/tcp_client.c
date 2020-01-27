@@ -17,7 +17,7 @@
 #define PORT_SIZE 16 
 #define HOSTNAME_SIZE 64
 #define USAGE "1. add [KEY] [VALUE] \n2. getvalue [KEY] \n3. getall \n4. remove [KEY]\n5. quit"
-#define TOKENS 7 //as getValue has 7 characters
+#define TOKENS 8 //as getValue has 7 characters
 
 
 enum cmd_type _get_type(char *type) {
@@ -109,6 +109,22 @@ int _get(int sockfd, struct command *cmd) {
     }
 }
 
+int _get_all(int sockfd, struct command *cmd) {
+
+    // send get request
+    send_cmd(sockfd, cmd);
+
+    // Recieve handshake
+    if (-1 == recv_cmd(sockfd, cmd)) {
+        fprintf(stderr, "Error: client: failed to receive handshake command.\n");
+        cmd->errorCode = -1;
+        return -1;
+    } else{
+        printf("All key values pairs: %s\n", cmd->value);
+        return 0;
+    }
+}
+
 int main(int argc, char **argv) {
     int sockfd;
     struct addrinfo hints;
@@ -195,6 +211,11 @@ int main(int argc, char **argv) {
         }
         else if (cmd.type == GETVALUE) {
             if (0 != (status = _get(sockfd, &cmd))) {
+                fprintf(stderr, "Error: client: failed to execute %u command: %d\n", cmd.type, status);
+            }
+        }
+        else if (cmd.type == GETALL) {
+            if (0 != (status = _get_all(sockfd, &cmd))) {
                 fprintf(stderr, "Error: client: failed to execute %u command: %d\n", cmd.type, status);
             }
         }
