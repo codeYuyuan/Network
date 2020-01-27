@@ -5,8 +5,7 @@ ARCH := $(shell uname -m)
 MAC_OS="Darwin"
 LINUX_OS="Linux"
 ########################################
-TARGET = tcp_server tcp_client
-#tcp_proxy
+TARGET = tcp_server tcp_client tcp_proxy
 ########################################
 # Directories
 OBJ = ./obj/
@@ -37,11 +36,9 @@ COMMON_H = $(INC)tcp_common.h
 COMMON_OBJ = $(OBJ)tcp_common.o
 PROX_OBJ = $(OBJ)tcp_proxy.o
 # all
-ALL_OBJ = $(CLIENT_OBJ) $(SERVER_OBJ) $(COMMON_OBJ)
-#$(PROX_OBJ)
+ALL_OBJ = $(CLIENT_OBJ) $(SERVER_OBJ) $(COMMON_OBJ) $(PROX_OBJ)
 ALL_H = $(CLIENT_H) $(SERVER_H) $(COMMON_H)
-EXEC = $(SRV_DIR)tcp_server $(CLI_DIR)tcp_client
-#$(PRX_DIR)tcp_proxy
+EXEC = $(SRV_DIR)tcp_server $(CLI_DIR)tcp_client $(PRX_DIR)tcp_proxy
 ########################################
 # Recipes
 .PHONY: server all clean
@@ -49,8 +46,8 @@ EXEC = $(SRV_DIR)tcp_server $(CLI_DIR)tcp_client
 all: $(TARGET)
 
 # PROXY 
-# tcp_proxy : $(PROX_OBJ) $(COMMON_OBJ)
-#	$(CC) $^ -o $(PRX_DIR)$@
+tcp_proxy : $(PROX_OBJ) $(COMMON_OBJ)
+	$(CC) $^ -o $(PRX_DIR)$@
 # SERVER 
 tcp_server : $(SERVER_OBJ) $(COMMON_OBJ)
 	$(CC) $^ -o $(SRV_DIR)$@ 
@@ -59,8 +56,8 @@ tcp_client : $(CLIENT_OBJ) $(COMMON_OBJ)
 	$(CC) $^ -o $(CLI_DIR)$@ 
 
 # PROXY OBJ FILES
-#$(PROX_OBJ) : $(SRC)tcp_proxy.c $(COMMON_H)
-#	$(CC) $(INC_FLAGS) $(C_FLAGS) -c $< -o $@
+$(PROX_OBJ) : $(SRC)tcp_proxy.c $(COMMON_H)
+	$(CC) $(INC_FLAGS) $(C_FLAGS) -c $< -o $@
 # SERVER OBJ FILES
 $(SERVER_OBJ) : $(SRC)tcp_server.c $(SERVER_H) $(COMMON_H)
 	$(CC) $(INC_FLAGS) $(C_FLAGS) -c $< -o $@
