@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 
 #include "tcp_common.h"
+
 #define PORT_SIZE 16 
 #define HOSTNAME_SIZE 64
 #define USAGE "1. add [KEY] [VALUE] \n2. getvalue [KEY] \n3. getall \n4. remove [KEY]\n5. quit"
