@@ -7,6 +7,7 @@
 CC = gcc
 CFLAGS = -g
 CPPFLAGS = -Wall -pedantic
+PTHREAD = -lpthread
 
 .PHONY: all clean
 
@@ -27,13 +28,13 @@ udp_server.o: udp_server.c
 	$(CC) $(CFLAGS) $(CPPFLAGS)  -c udp_server.c -o udp_server.o
 
 udp_client: udp_client.o
-	$(CC) -o udp_client udp_client.o 
+	$(CC) -o udp_client udp_client.o $(PTHREAD)
 
 udp_client.o: udp_client.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c udp_client.c -o udp_client.o
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c udp_client.c -o udp_client.o $(PTHREAD)
 
 udp_proxy: udp_proxy.o
-	$(CC) -o udp_proxy udp_proxy.o 
+	$(CC) -o udp_proxy udp_proxy.o $(PTHREAD)
 
 udp_proxy.o: udp_proxy.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c udp_proxy.c -o udp_proxy.o 
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c udp_proxy.c -o udp_proxy.o $(PTHREAD)
