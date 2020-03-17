@@ -1,40 +1,50 @@
+# Name: Yuyuan Liu
+# NSID: yul556
+# Student ID: 11211784
 
-#  Created by Yuyuan Liu on 2020-02-07.
-#  NSID: yul556
-#  Student ID: 11211784
-
-
+TARGET = tcp_router
+# Directories
+OBJ = ./obj/
+INC = ./include/
+SRC = ./src/
+SRV_DIR = ./router_dir/
+$(shell mkdir -p $(OBJ))
+$(shell mkdir -p $(SRV_DIR))
+########################################
+# Compiler and linker options
 CC = gcc
-CFLAGS = -g
-CPPFLAGS = -Wall -pedantic
-PTHREAD = -lpthread
+AR_OPTIONS = cr
+C_FLAGS = -Wall -pedantic -g
+INC_FLAGS = -I$(INC)
+########################################
 
-.PHONY: all clean
+# Filename macroes
+# server 
+SERVER_OBJ = $(OBJ)tcp_router.o
+UTIL_H = $(INC)tcp_util.h
+UTIL_OBJ = $(OBJ)tcp_util.o
+# all
+ALL_OBJ = $(SERVER_OBJ) $(UTIL_OBJ) $(PROX_OBJ) $(UDP_SERVER_OBJ)
+ALL_H = $(UTIL_H)
+EXEC = $(SRV_DIR)tcp_router
+########################################
+# Recipes
+.PHONY: server all clean
 
-all: clean udp_proxy udp_server udp_client
+all: $(TARGET)
 
-p1: udp_server udp_client
+tcp_router : $(SERVER_OBJ) $(UTIL_OBJ)
+	$(CC) $^ -o $(SRV_DIR)$@
 
-p2: udp_server udp_proxy udp_client
 
+$(SERVER_OBJ) : $(SRC)tcp_router.c $(UTIL_H)
+	$(CC) $(INC_FLAGS) $(C_FLAGS) -c $< -o $@
+# UTIL OBJ FILES
+$(UTIL_OBJ) : $(SRC)tcp_util.c $(UTIL_H)
+	$(CC) $(INC_FLAGS) $(C_FLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o *.a udp_server udp_proxy udp_client
-
-udp_server: udp_server.o
-	$(CC) -o udp_server udp_server.o
-
-udp_server.o: udp_server.c
-	$(CC) $(CFLAGS) $(CPPFLAGS)  -c udp_server.c -o udp_server.o
-
-udp_client: udp_client.o
-	$(CC) -o udp_client udp_client.o $(PTHREAD)
-
-udp_client.o: udp_client.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c udp_client.c -o udp_client.o $(PTHREAD)
-
-udp_proxy: udp_proxy.o
-	$(CC) -o udp_proxy udp_proxy.o $(PTHREAD)
-
-udp_proxy.o: udp_proxy.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c udp_proxy.c -o udp_proxy.o $(PTHREAD)
+	rm -f $(ALL_OBJ)
+	rm -f $(EXEC)
+	rmdir $(OBJ)
+	rmdir $(SRV_DIR)
